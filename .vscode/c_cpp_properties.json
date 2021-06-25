@@ -1,0 +1,21 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/module/**",
+                "/root/linux-3.10.0-1160.el7",
+                "/root/linux-3.10.0-1160.el7/include",
+                "/root/linux-3.10.0-1160.el7/arch/x86/include",
+                "/root/linux-3.10.0-1160.el7/arch/x86/include/generated/"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c99",
+            "cppStandard": "c++11",
+            "intelliSenseMode": "linux-gcc-x64",
+            "configurationProvider": "ms-vscode.makefile-tools"
+        }
+    ],
+    "version": 4
+}

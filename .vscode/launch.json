@@ -1,0 +1,39 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Kernel",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/emulator/vmlinux",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/module",
+            "miDebuggerServerAddress": "localhost:1234",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "load-kernel-module",
+                    "text": "add-symbol-file ${workspaceFolder}/dist/gatedefender.ko 0xffffffffc002f000 -s .data 0xffffffffc0031000 -s .bss 0xffffffffc0031258"
+                }
+            ],
+            "sourceFileMap": {
+                "${workspaceFolder}": {
+                    "editorPath": "${workspaceFolder}",
+                    "useForBreakpoints": true
+                }
+            },
+            "miDebuggerPath": "/usr/local/bin/gdb",
+            "logging": {
+                "engineLogging": true
+            }
+        }
+    ]
+}

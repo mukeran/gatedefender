@@ -1,0 +1,16 @@
+# dist files
+dist/
+
+# emulator files
+emulator/bzImage
+emulator/vmlinux
+emulator/rootfs
+emulator/initfs/data
+
+# test files
+test/*.test
+test/*.o
+*core*
+
+# editor files
+.vscode-ctags
