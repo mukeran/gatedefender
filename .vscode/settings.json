@@ -1,4 +1,13 @@
 {
-    "files.associations": {},
+    "files.associations": {
+        "netfilter_ipv4.h": "c",
+        "netfilter.h": "c",
+        "tcp.h": "c",
+        "dns_resolver.h": "c",
+        "proc_fs.h": "c",
+        "config.h": "c",
+        "kernel.h": "c",
+        "stream.h": "c"
+    },
     "C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: Google, IndentWidth: 2 ,ColumnLimit: 0}"
 }

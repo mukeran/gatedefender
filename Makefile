@@ -31,6 +31,8 @@ setup_network:
 	tunctl -t tap0 -u root
 	ip link set tap0 up
 	ip addr add 172.16.222.1/24 dev tap0
+	iptables -t nat -A POSTROUTING -s 172.16.222.1/24 -j SNAT -o ens33 --to 172.16.108.240
 remove_network:
 	ip link set tap0 down
 	tunctl -d tap0
+	iptables -t nat -D POSTROUTING -s 172.16.222.1/24 -j SNAT -o ens33 --to 172.16.108.240
