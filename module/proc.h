@@ -8,6 +8,7 @@
 #define EPROCDIR 10001
 #define EPROCCONFIG 10002
 #define EPROCSTREAMS 10003
+#define EPROCSTREAMDATA 10004
 
 extern struct proc_dir_entry *proc_base_dir;
 extern struct proc_dir_entry *proc_config_file;

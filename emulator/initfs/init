@@ -12,6 +12,8 @@ ls -d /etc/modules/* | xargs /sbin/insmod
 ip addr add 172.16.222.2/24 brd 172.16.222.255 dev eth0
 ip link set eth0 up
 ip route add default via 172.16.222.1
+ip addr add 127.0.0.1/8 dev lo
+ip link set lo up
 # setup mdev service (for /dev directory)
 mdev -d
 # insert gatedefender module
@@ -24,5 +26,5 @@ System booted, entering shell environment...
 
 !
 chmod +x /get-sections.sh
-cd /data
+cd /proc/gatedefender
 exec /bin/sh

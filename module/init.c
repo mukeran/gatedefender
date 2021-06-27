@@ -8,9 +8,6 @@
 
 MODULE_LICENSE("GPL");
 
-int test;
-char *str = "123456";
-
 int init_module(void) {
   printk(KERN_INFO "Hello world!\n");
   init_global_config();

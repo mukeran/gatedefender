@@ -75,7 +75,8 @@ void init_global_config(void) {
   set_global_config(BLOCK_DNS, "0");
   set_global_config(BLOCK_TCP, "0");
   set_global_config(BLOCK_ICMP, "0");
-  set_global_config(BLOCK_RAW, "0");
+  set_global_config(BLOCK_DNS_TUNNELING_STREAM, "0");
+  set_global_config(BLOCK_ICMP_TUNNELING_STREAM, "0");
 }
 
 void free_global_config(void) {
@@ -110,8 +111,8 @@ int unserialize_global_config(const char *data, int length, u8 overwrite) {
       continue;
     pos = strchr(token, '=');
     if (pos == NULL) {
-      printk(KERN_ALERT "Invalid config line!\n");
-      return -ECONFIG;
+      printk(KERN_ALERT "Invalid config line, ignored\n");
+      continue;
     }
     key = (char*)kzalloc(sizeof(char) * (pos - token + 1), GFP_KERNEL);
     memcpy(key, token, sizeof(char) * (pos - token));
@@ -143,10 +144,4 @@ const char *get_global_config(const char *key) {
 
 void set_global_config(const char *key, const char *value) {
   return set_config(global_config, key, value);
-}
-
-u8 is_blocked_stream(int id) {
-  char buffer[30];
-  sprintf(buffer, "block_stream_%d", id);
-  return strcmp(get_global_config(buffer), "1") == 0;
 }

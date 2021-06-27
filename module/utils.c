@@ -26,3 +26,28 @@ char* trim(char *str) {
   str[length] = '\0';
   return str;
 }
+
+hash_list_t* alloc_hash_list(void) {
+  struct hash_list *hl = (struct hash_list *) kzalloc(sizeof(struct hash_list), GFP_ATOMIC);
+  hl->hash = (struct hash_list **) kzalloc(sizeof(struct hash_list *) * HASH_LIST_SIZE, GFP_ATOMIC);
+  hl->count = 0;
+  return hl;
+}
+
+hash_list_t* check_hash(struct hash_list* hl, int hash) {
+  if (hash >= HASH_LIST_SIZE)
+    return NULL;
+  if (hl->hash[hash] != NULL)
+    return hl->hash[hash];
+  return NULL;
+}
+
+hash_list_t* insert_hash(struct hash_list* hl, int hash) {
+  if (hash >= HASH_LIST_SIZE)
+    return NULL;
+  if (hl->hash[hash] != NULL)
+    return hl->hash[hash];
+  hl->hash[hash] = alloc_hash_list();
+  ++hl->count;
+  return hl->hash[hash];
+}

@@ -7,7 +7,8 @@
         "proc_fs.h": "c",
         "config.h": "c",
         "kernel.h": "c",
-        "stream.h": "c"
+        "stream.h": "c",
+        "proc.h": "c"
     },
     "C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: Google, IndentWidth: 2 ,ColumnLimit: 0}"
 }

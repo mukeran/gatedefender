@@ -24,8 +24,9 @@ static unsigned int hook_network_in(const struct nf_hook_ops *ops,
   struct udphdr *udp_header;
   struct timeval tv;
   do_gettimeofday(&tv);
+  if (strcmp(in->name, "lo") == 0)
+    return NF_ACCEPT;
   skb->tstamp = timeval_to_ktime(tv);
-  printk(KERN_INFO "network in\n");
   eth = (struct ethhdr *)skb_mac_header(skb);
   ip_header = (struct iphdr *)skb_network_header(skb);
   // printk(KERN_INFO "src mac %pM, dst mac %pM\n", eth->h_source, eth->h_dest);
@@ -39,8 +40,6 @@ static unsigned int hook_network_in(const struct nf_hook_ops *ops,
   } else if (ip_header->protocol == IPPROTO_UDP) {
     udp_header = udp_hdr(skb);
     return identify_udp_packet(IN, skb, ip_header, udp_header);
-  } else if (ip_header->protocol == IPPROTO_RAW) {
-
   }
   return NF_ACCEPT;
 }
@@ -57,8 +56,9 @@ static unsigned int hook_network_out(const struct nf_hook_ops *ops,
   struct udphdr *udp_header;
   struct timeval tv;
   do_gettimeofday(&tv);
+  if (strcmp(out->name, "lo") == 0)
+    return NF_ACCEPT;
   skb->tstamp = timeval_to_ktime(tv);
-  printk(KERN_INFO "network out\n");
   eth = (struct ethhdr *)skb_mac_header(skb);
   ip_header = (struct iphdr *)skb_network_header(skb);
   // printk(KERN_INFO "src mac %pM, dst mac %pM\n", eth->h_source, eth->h_dest);
@@ -72,8 +72,6 @@ static unsigned int hook_network_out(const struct nf_hook_ops *ops,
   } else if (ip_header->protocol == IPPROTO_UDP) {
     udp_header = udp_hdr(skb);
     return identify_udp_packet(OUT, skb, ip_header, udp_header);
-  } else if (ip_header->protocol == IPPROTO_RAW) {
-
   }
   return NF_ACCEPT;
 }

@@ -28,6 +28,7 @@ run: module
 debug:
 	EXTRA="-s -S" DEBUG='debug' $(MAKE) run
 setup_network:
+	sysctl -w net.ipv4.ip_forward=1
 	tunctl -t tap0 -u root
 	ip link set tap0 up
 	ip addr add 172.16.222.1/24 dev tap0
