@@ -1,3 +1,7 @@
+/**
+ * config.h - Header for config.c
+ * @author mukeran
+ */
 #ifndef _MODULE_CONFIG_H
 #define _MODULE_CONFIG_H
 

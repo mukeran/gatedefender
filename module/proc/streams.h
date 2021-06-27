@@ -1,3 +1,7 @@
+/**
+ * proc/streams.h - Header for proc/streams.c
+ * @author mukeran
+ */
 #ifndef _MODULE_PROC_STREAMS_H
 #define _MODULE_PROC_STREAMS_H
 

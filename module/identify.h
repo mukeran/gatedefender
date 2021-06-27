@@ -1,3 +1,7 @@
+/**
+ * identify.h - Header for identify.c
+ * @author mukeran
+ */
 #ifndef _MODULE_IDENTIFY_H
 #define _MODULE_IDENTIFY_H
 
@@ -6,6 +10,7 @@
 #include <linux/udp.h>
 #include <linux/icmp.h>
 
+/* Describe network packet direction */
 #define OUT 0
 #define IN 1
 

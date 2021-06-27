@@ -1,3 +1,7 @@
+/**
+ * stream.h - Header for stream.c
+ * @author mukeran
+ */
 #ifndef _MODULE_STREAM_H
 #define _MODULE_STREAM_H
 
@@ -19,10 +23,10 @@ enum {
 #define ICMP_SEQUENCE ICMP_SEQUENCE
   DNS_LOGICAL_STREAM = 5, /* Describe DNS logical stream (same sld) */
 #define DNS_LOGICAL_STREAM DNS_LOGICAL_STREAM
-  DNS_TUNNELING_STREAM = 6, /* Describe DNS backdoor stream */
+  DNS_TUNNELING_STREAM = 6, /* Describe DNS tunneling stream */
 #define DNS_TUNNELING_STREAM DNS_TUNNELING_STREAM
   ICMP_TUNNELING_STREAM = 7,
-#define ICMP_TUNNELING_STREAM ICMP_TUNNELING_STREAM /* Describe special ICMP backdoor/exploit stream */
+#define ICMP_TUNNELING_STREAM ICMP_TUNNELING_STREAM /* Describe special ICMP tunneling stream */
 };
 
 struct stream_data_list {

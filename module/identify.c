@@ -1,3 +1,7 @@
+/**
+ * identify.c - Handle TCP/UDP/ICMP packet from capture | 处理来自 netfilter 中捕获的原始 TCP/UDP/ICMP包，提取 saddr, daddr, sport, dport 等 network flow 信息
+ * @author mukeran
+ */
 #include "identify.h"
 
 #include <linux/net.h>
@@ -7,6 +11,10 @@
 #include "config.h"
 #include "stream.h"
 
+/**
+ * Check if stream is blocked by config
+ * 检查配置中是否将 stream 流阻止连接
+ */
 static u8 is_blocked_stream(struct stream* stream) {
   char buffer[30];
   if (stream == NULL)
@@ -19,6 +27,10 @@ static u8 is_blocked_stream(struct stream* stream) {
   return strcmp(get_global_config(buffer), "1") == 0;
 }
 
+/**
+ * Identify TCP packet
+ * 提取 TCP 包中的信息，调用 identify_stream 确认流关系，判断是否屏蔽
+ */
 u32 identify_tcp_packet(u8 dir, struct sk_buff *skb, struct iphdr *ip_header, struct tcphdr *tcp_header) {
   u32 saddr = ip_header->saddr;
   u32 daddr = ip_header->daddr;
@@ -39,6 +51,10 @@ u32 identify_tcp_packet(u8 dir, struct sk_buff *skb, struct iphdr *ip_header, st
   return NF_ACCEPT;
 }
 
+/**
+ * Identify UDP packet
+ * 作用同 identify_tcp_packet，不过协议换成了 UDP
+ */
 u32 identify_udp_packet(u8 dir, struct sk_buff *skb, struct iphdr *ip_header, struct udphdr *udp_header) {
   u32 saddr = ip_header->saddr;
   u32 daddr = ip_header->daddr;
@@ -65,6 +81,10 @@ u32 identify_udp_packet(u8 dir, struct sk_buff *skb, struct iphdr *ip_header, st
   return NF_ACCEPT;
 }
 
+/**
+ * Identify ICMP packet
+ * 作用同 identify_tcp_packet，不过协议换成了 ICMP
+ */
 u32 identify_icmp_packet(u8 dir, struct sk_buff *skb, struct iphdr *ip_header, struct icmphdr *icmp_header) {
   u32 saddr = ip_header->saddr;
   u32 daddr = ip_header->daddr;

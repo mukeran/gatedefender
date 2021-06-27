@@ -1,3 +1,7 @@
+/**
+ * proc.c - Create config/stream/streams in /proc | 创建 proc 文件系统中查看/修改配置的文件 config，查看流列表的文件 streams，以及显示流内容的 stream 目录及其文件
+ * @author mukeran
+ */
 #include "proc.h"
 
 #include <linux/fs.h>
@@ -40,6 +44,10 @@ static struct file_operations stream_data_ops = {
   .release = stream_data_release,
 };
 
+/**
+ * Create stream data proc /proc/stream/<:id>
+ * 创建显示流内容的 proc 文件 /proc/stream/<:id>
+ */
 static int create_stream_data_proc(int id) {
   char buffer[20];
   struct proc_dir_entry *proc_stream_data_file;
@@ -50,6 +58,10 @@ static int create_stream_data_proc(int id) {
   return 0;
 }
 
+/**
+ * Kernel thread loop that updates /proc/stream/<:id> periodly
+ * 用来动态创建 /proc/stream 目录中流文件的循环，在另一线程启动（原因：proc_create 中用到了 kmalloc，但是没有配置 GPF_ATOMIC。如果在捕获到网络流量包的上下文调用，由于 dru 的限制，会导致申请内存失败，并报错。所以需要将 proc_create 的过程放在另外一个非网络流量包上下文执行）
+ */
 static int proc_stream_data_update_loop(void *data) {
   int i, last = 0, count;
   while (true) {
@@ -64,6 +76,10 @@ static int proc_stream_data_update_loop(void *data) {
   return 0;
 }
 
+/**
+ * Initialize gatedefender proc filesystem
+ * 初始化 gatedefender proc 文件系统
+ */
 int init_proc(void) {
   /* Create /proc/gatedefender */
   proc_base_dir = proc_mkdir(PROC_DIR_NAME, NULL);

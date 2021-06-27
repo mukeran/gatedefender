@@ -1,3 +1,7 @@
+/**
+ * utils.h - Header for utils.c
+ * @author mukeran
+ */
 #ifndef _MODULE_UTILS_H
 #define _MODULE_UTILS_H
 

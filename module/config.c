@@ -1,3 +1,7 @@
+/**
+ * config.c - Module config get and set | 模块配置功能（key-value 形式，包括从字符串形式到存储形式的互相转换）
+ * @author mukeran
+ */
 #include "config.h"
 
 #include <linux/slab.h>
@@ -9,12 +13,20 @@
 
 struct config *global_config = NULL;
 
+/**
+ * Increase capacity of a config instance
+ * 增大 conf 的容量
+ */
 static void grow_config_capacity(struct config *conf) {
   conf->capacity += CONFIG_CAPACITY_LEVEL;
   conf->keys = (char**)krealloc(conf->keys, sizeof(char*) * conf->capacity, GFP_KERNEL | __GFP_ZERO);
   conf->values = (char**)krealloc(conf->values, sizeof(char*) * conf->capacity, GFP_KERNEL | __GFP_ZERO);
 }
 
+/**
+ * Get config by key
+ * 获取 conf 中 key 对应的配置值
+ */
 const char *get_config(struct config *conf, const char *key) {
   int i;
   for (i = 0; i < conf->count; ++i) {
@@ -24,6 +36,10 @@ const char *get_config(struct config *conf, const char *key) {
   return "";
 }
 
+/**
+ * Set config by key and value
+ * 添加/修改 config 中 key 对应的值为 value
+ */
 void set_config(struct config *conf, const char *key, const char *value) {
   int i, id;
   for (i = 0; i < conf->count; ++i) {
@@ -41,6 +57,10 @@ void set_config(struct config *conf, const char *key, const char *value) {
   ++conf->count;
 }
 
+/**
+ * Initialize a config instance
+ * 初始化一个 config 实例，包括对各个 field 内存的申请
+ */
 struct config* init_config(void) {
   struct config *conf;
   conf = (struct config*)kzalloc(sizeof(struct config), GFP_KERNEL);
@@ -51,6 +71,10 @@ struct config* init_config(void) {
   return conf;
 }
 
+/**
+ * Free a config instance
+ * 释放一个 config 实例，包括递归地对 field 内存进行释放
+ */
 static void free_config(struct config *conf) {
   int i;
   if (conf == NULL)
@@ -66,6 +90,10 @@ static void free_config(struct config *conf) {
   kfree(conf);
 }
 
+/**
+ * Initialize global config instance "global_config"
+ * 调用 init_config 初始化全局配置实例 global_config，并且设置配置的初始值
+ */
 void init_global_config(void) {
   if (global_config != NULL)
     return;
@@ -79,10 +107,18 @@ void init_global_config(void) {
   set_global_config(BLOCK_ICMP_TUNNELING_STREAM, "0");
 }
 
+/**
+ * Free global config instance "global_config"
+ * 调用 free_config 释放 global_config
+ */
 void free_global_config(void) {
   free_config(global_config);
 }
 
+/**
+ * Convert global_config key-value to text form
+ * 序列化 global_config 数据，即将全局配置 global_config 中存储的数据转化为 proc 文件系统中打印的 key = value 形式
+ */
 int serialize_global_config(char **data) {
   int i, length = 0, capacity = BUFFER_CAPACITY_LEVEL, append_length;
   *data = (char *)kzalloc(sizeof(char) * capacity, GFP_KERNEL);
@@ -98,6 +134,10 @@ int serialize_global_config(char **data) {
   return length;
 }
 
+/**
+ * Convert config text form to config structure and overwrite or update global_config
+ * 反序列化 key = value 形式数据，主要用于将 proc 文件系统写入的修改信息应用至 global_config 中，module 中仅调用了 overwrite=0 的情况
+ */
 int unserialize_global_config(const char *data, int length, u8 overwrite) {
   int id, line_length;
   char *sep = strdup(data), *pos, *token, *key, *value;
@@ -138,10 +178,18 @@ int unserialize_global_config(const char *data, int length, u8 overwrite) {
   return 0;
 }
 
+/**
+ * Get config by key from global_config
+ * 从 global_config 中获取配置
+ */
 const char *get_global_config(const char *key) {
   return get_config(global_config, key);
 }
 
+/**
+ * Set global_config by key and value
+ * 设置 global_config
+ */
 void set_global_config(const char *key, const char *value) {
   return set_config(global_config, key, value);
 }

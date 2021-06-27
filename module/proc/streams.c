@@ -1,3 +1,7 @@
+/**
+ * proc/streams.c - /proc/gatedefender/streams file operations
+ * @author mukeran
+ */
 #include "streams.h"
 
 #include <linux/uaccess.h>

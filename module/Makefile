@@ -1,3 +1,4 @@
+# Makefile for gatedefender Linux kernel module
 DEV_NAME = gatedefender
 # target object name
 obj-m += $(DEV_NAME).o

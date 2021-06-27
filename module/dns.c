@@ -1,3 +1,7 @@
+/**
+ * dns.c - Function to check or parse DNS packet | 这部分代码实现了对 DNS 包中域名的解析/判定是否为 DNS Tunneling 函数
+ * @author mukeran
+ */
 #include "dns.h"
 
 #include <linux/slab.h>
@@ -5,6 +9,10 @@
 #include "stream.h"
 #include "utils.h"
 
+/**
+ * Parse domain name from DNS packet
+ * 从 DNS 包中获得查询的域名
+ */
 static char** parse_dns_host(char *host, int *_count) {
   int i = 0, count = 0;
   u8 fragment;
@@ -27,6 +35,10 @@ static char** parse_dns_host(char *host, int *_count) {
   return parts;
 }
 
+/**
+ * Use dot to join domain name parts
+ * 将从 DNS 包中得到的几部分域名用“.”连接
+ */
 static inline void join_host_parts(char *target, char **start, char **end) {
   int length = 0, slen;
   char **cur = start;
@@ -43,6 +55,10 @@ static inline void join_host_parts(char *target, char **start, char **end) {
   target[length] = 0;
 }
 
+/**
+ * Garbage collect function for DNS parts
+ * DNS parts 用到的 char ** 的释放函数
+ */
 static inline void gc_dns_parts(char **parts, int count) {
   int i;
   for (i = 0; i < count; ++i)
@@ -51,6 +67,10 @@ static inline void gc_dns_parts(char **parts, int count) {
   kfree(parts);
 }
 
+/**
+ * Hash domain name string
+ * 哈希域名字符串
+ */
 static int hash_host(char *host) {
   int i, len = strlen(host), hash = 0;
   for (i = 0; i < len; ++i)
@@ -58,8 +78,12 @@ static int hash_host(char *host) {
   return hash;
 }
 
-#define DNS_TUNNELING_RANDOM_HOST_THRESHOLD 5
+#define DNS_TUNNELING_RANDOM_HOST_THRESHOLD 20
 
+/**
+ * Check DNS SLD (test.mukeran.com -> mukeran.com) if exists in hash list
+ * 检查二级域名是否存在于哈希表中
+ */
 u8 check_dns_sld(struct stream *stream, const char *data, int data_length) {
   int i, j, prev_total = 12, count, hash;
   u16 questions;
@@ -87,7 +111,11 @@ u8 check_dns_sld(struct stream *stream, const char *data, int data_length) {
   return 0;
 }
 
-u8 check_dns_request_backdoor(struct stream *stream, const char *data, int data_length) {
+/**
+ * Judge if DNS request is a packet of DNS tunneling
+ * 判断 DNS 请求包是否为可能的 DNS Tunneling 包
+ */
+u8 check_dns_request_tunneling(struct stream *stream, const char *data, int data_length) {
   int i, j, prev_total = 12, count, hash;
   u16 questions;
   char host[256], **parts, sld[256];
@@ -112,6 +140,7 @@ u8 check_dns_request_backdoor(struct stream *stream, const char *data, int data_
       hash = hash_host(sld);
       if (!check_hash(hl, hash)) {
         insert_hash(hl, hash);
+        /* Rule: If a SLD has been queried more than DNS_TUNNELING_RANDOM_HOST_THRESHOLD different subdomain in a very short time, its DNS query might be a DNS Tunneling session */
         if (hl->count >= DNS_TUNNELING_RANDOM_HOST_THRESHOLD)
           return 1;
       }

@@ -1,3 +1,7 @@
+/**
+ * proc/config.h - Header for proc/config.c
+ * @author mukeran
+ */
 #ifndef _MODULE_PROC_CONFIG_H
 #define _MODULE_PROC_CONFIG_H
 

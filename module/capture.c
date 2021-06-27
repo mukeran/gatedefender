@@ -1,3 +1,7 @@
+/**
+ * capture.c - Use netfilter to capture network packet | 使用 netfilter 抓包
+ * @author mukeran
+ */
 #include "capture.h"
 
 #include <linux/net.h>
@@ -12,6 +16,10 @@
 
 static struct nf_hook_ops nf_in, nf_out;
 
+/**
+ * Handle network packets which input from outside
+ * 捕获外部进入网卡的包
+ */
 static unsigned int hook_network_in(const struct nf_hook_ops *ops,
                                     struct sk_buff *skb,
                                     const struct net_device *in,
@@ -24,13 +32,11 @@ static unsigned int hook_network_in(const struct nf_hook_ops *ops,
   struct udphdr *udp_header;
   struct timeval tv;
   do_gettimeofday(&tv);
-  if (strcmp(in->name, "lo") == 0)
+  if (strcmp(in->name, "lo") == 0) // Ignore packets from local loopback
     return NF_ACCEPT;
-  skb->tstamp = timeval_to_ktime(tv);
+  skb->tstamp = timeval_to_ktime(tv); // Set tstamp for identify_stream
   eth = (struct ethhdr *)skb_mac_header(skb);
   ip_header = (struct iphdr *)skb_network_header(skb);
-  // printk(KERN_INFO "src mac %pM, dst mac %pM\n", eth->h_source, eth->h_dest);
-  // printk(KERN_INFO "src IP addr %pI4\n", &ip_header->saddr);
   if (ip_header->protocol == IPPROTO_ICMP) {
     icmp_header = icmp_hdr(skb);
     return identify_icmp_packet(IN, skb, ip_header, icmp_header);
@@ -44,6 +50,10 @@ static unsigned int hook_network_in(const struct nf_hook_ops *ops,
   return NF_ACCEPT;
 }
 
+/**
+ * Handle network packets which output from network card
+ * 捕获离开网卡的包
+ */
 static unsigned int hook_network_out(const struct nf_hook_ops *ops,
                                     struct sk_buff *skb,
                                     const struct net_device *in,
@@ -56,13 +66,11 @@ static unsigned int hook_network_out(const struct nf_hook_ops *ops,
   struct udphdr *udp_header;
   struct timeval tv;
   do_gettimeofday(&tv);
-  if (strcmp(out->name, "lo") == 0)
+  if (strcmp(out->name, "lo") == 0) // Ignore packets from local loopback
     return NF_ACCEPT;
-  skb->tstamp = timeval_to_ktime(tv);
+  skb->tstamp = timeval_to_ktime(tv); // Set tstamp for identify_stream
   eth = (struct ethhdr *)skb_mac_header(skb);
   ip_header = (struct iphdr *)skb_network_header(skb);
-  // printk(KERN_INFO "src mac %pM, dst mac %pM\n", eth->h_source, eth->h_dest);
-  // printk(KERN_INFO "src IP addr %pI4\n", &ip_header->saddr);
   if (ip_header->protocol == IPPROTO_ICMP) {
     icmp_header = icmp_hdr(skb);
     return identify_icmp_packet(OUT, skb, ip_header, icmp_header);
@@ -76,6 +84,10 @@ static unsigned int hook_network_out(const struct nf_hook_ops *ops,
   return NF_ACCEPT;
 }
 
+/**
+ * Register hook functions through nf_register_hook
+ * 调用 nf_register_hook 注册钩子函数
+ */
 void register_capture(void) {
   nf_in.hook = (nf_hookfn *)hook_network_in;
   nf_in.hooknum = NF_INET_LOCAL_IN;

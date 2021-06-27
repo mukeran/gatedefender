@@ -1,3 +1,7 @@
+/**
+ * proc/config.c - /proc/gatedefender/config file operations
+ * @author mukeran
+ */
 #include "config.h"
 
 #include "../config.h"
